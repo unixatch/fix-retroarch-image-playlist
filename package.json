@@ -1,0 +1,15 @@
+{
+  "name": "fix-playlist-immagini",
+  "version": "1.0.0",
+  "description": "",
+  "main": "fix-playlist-immagini.mjs",
+  "scripts": {
+    "test": "node fix-playlist-immagini.mjs"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chalk-animation": "^2.0.3",
+    "yaml": "^2.3.2"
+  }
+}

@@ -1,0 +1,14 @@
+# Where the playlist file used
+# by RetroArch is stored
+pathOfPlaylistFile: ""
+
+# Where the actual screenshots created
+# by RetroArch are being stored
+screenshotsDirPaths:
+  normal: ""
+  relative: ""
+
+# Different kinds of
+# loading animations for certain sections
+loadingAnims: true
+chalkLoadingAnim: true
