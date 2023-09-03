@@ -1,14 +1,23 @@
 # Where the playlist file used
 # by RetroArch is stored
+# NOTE: on Android use the 
+#       termux-setup-storage's path
+#       to get to the file
 pathOfPlaylistFile: ""
 
 # Where the actual screenshots created
 # by RetroArch are being stored
 screenshotsDirPaths:
-  normal: ""
-  relative: ""
+  desktop: ""
+  
+  # Termux or similar terminal emulators below
+  mobile:
+    normal: ""
+    # termux-setup-storage's path to
+    # the same folder or something similar
+    terminalEmu: ""
 
-# Different kinds of
-# loading animations for certain sections
+# Different kinds of loading
+# animations for certain sections
 loadingAnims: true
 chalkLoadingAnim: true

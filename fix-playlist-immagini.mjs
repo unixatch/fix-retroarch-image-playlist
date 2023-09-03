@@ -1,4 +1,5 @@
 import fs from "fs"
+import { execSync } from "child_process"
 import YAML from "yaml"
 
 // Opzioni
@@ -8,6 +9,20 @@ const {
   loadingAnims,
   chalkLoadingAnim
 } = YAML.parse(fs.readFileSync("config.yaml").toString());
+
+let isMobile;
+try {
+  // Android 
+  // or Linux/MacOS
+  const osName = execSync("uname -o")
+    .toString()
+    .replace("\n", "");
+  isMobile = (osName === "Android") ? true : false;
+} catch(err) {
+  // Windows
+  // or Linux OSes without GNU coreutils
+  isMobile = false;
+}
 
 const colors = {
   // Custom formatting
@@ -52,10 +67,18 @@ const template_elemento = {
   "crc32": "",
   "db_name": ""
 };
-const listaImmagini_suSistema = fs.readdirSync(
-  screenshotsDirPaths.relative,
-  { recursive: true }
-)
+let listaImmagini_suSistema;
+if (isMobile) {
+  listaImmagini_suSistema = fs.readdirSync(
+    screenshotsDirPaths.mobile.terminalEmu,
+    { recursive: true }
+  )
+} else {
+  listaImmagini_suSistema = fs.readdirSync(
+    screenshotsDirPaths.desktop,
+    { recursive: true }
+  )
+}
 let listaImmagini_soloRecursivi = listaImmagini_suSistema.filter(
   thing => thing.search("/") !== -1
 )
@@ -65,17 +88,18 @@ let itemsInFormatoStringa = JSON.stringify(parsedJSON?.items)
 var addCount = 0
 listaImmagini_soloRecursivi.forEach(
   imgConCartella => {
+    const path = (isMobile) 
+      ? screenshotsDirPaths.mobile.normal 
+      : screenshotsDirPaths.desktop;
     let pathCompletaImmagine = `${
-      escapeRegExp(screenshotsDirPaths.normal)
+      escapeRegExp(path)
     }${escapeRegExp(imgConCartella)}`
     
     // Inesistente nella lista
     if (itemsInFormatoStringa.search(pathCompletaImmagine) === -1) 
     {
       // ↓ Deve essere normale, niente escapes
-      let pathCompletaImmagine = `${
-        screenshotsDirPaths.normal
-      }${imgConCartella}`
+      let pathCompletaImmagine = `${path}${imgConCartella}`
       let copiaTemplate = {
         ...template_elemento
       };
