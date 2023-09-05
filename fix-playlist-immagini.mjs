@@ -1,14 +1,19 @@
+#!/usr/bin/env node
 import fs from "fs"
+import { join } from "path"
 import { execSync } from "child_process"
 import YAML from "yaml"
+const { __dirname } = await import("./utils.mjs");
+
 
 // Opzioni
+const configPath = join(__dirname, "config.yaml");
 const {
   pathOfPlaylistFile,
   screenshotsDirPaths,
   loadingAnims,
   chalkLoadingAnim
-} = YAML.parse(fs.readFileSync("config.yaml").toString());
+} = YAML.parse(fs.readFileSync(configPath).toString());
 
 let isMobile;
 try {
@@ -28,11 +33,13 @@ const colors = {
   // Custom formatting
   normal: "\x1b[0m",
   bold: "\x1b[1m",
+  italics: "\x1b[3m",
   underline: "\x1b[4m",
   // Actual colors
   red: "\x1b[31;1m",
-  dimRed: "\x1b[31;2m",
-  dimGray: "\x1b[37;2m"
+  yellow: "\x1b[33m",
+  dimYellow: "\x1b[33;2m",
+  dimRed: "\x1b[31;2m"
 }
 
 const stdout = process.stdout;
@@ -50,7 +57,15 @@ try {
 } catch(err) {
   // In caso non c'è il file
   if (err.code === "ENOENT") {
-    console.log(`${colors.red}'${colors.dimRed+colors.underline}content_image_history.lpl${colors.normal+colors.red}' non è presente${colors.normal}`)
+    if (pathOfPlaylistFile === "") {
+      console.log(`${colors.yellow}La stringa "${colors.normal+colors.underline}pathOfPlaylistFile${colors.normal+colors.yellow}" è vuota,\nmagari devi configurare ${
+        colors.normal +
+        colors.italics +
+        colors.dimYellow
+      }config.yaml${colors.normal+colors.yellow} ?${colors.normal}\n`)
+      process.exit()
+    }
+    console.log(`${colors.red}'${colors.dimRed+colors.underline}content_image_history.lpl${colors.normal+colors.red}' non è presente${colors.normal}\n`)
     process.exit()
   }
   console.log(err)
@@ -68,16 +83,49 @@ const template_elemento = {
   "db_name": ""
 };
 let listaImmagini_suSistema;
-if (isMobile) {
-  listaImmagini_suSistema = fs.readdirSync(
-    screenshotsDirPaths.mobile.terminalEmu,
-    { recursive: true }
-  )
-} else {
-  listaImmagini_suSistema = fs.readdirSync(
-    screenshotsDirPaths.desktop,
-    { recursive: true }
-  )
+try {
+  if (isMobile) {
+    listaImmagini_suSistema = fs.readdirSync(
+      screenshotsDirPaths.mobile.terminalEmu,
+      { recursive: true }
+    )
+  } else {
+    listaImmagini_suSistema = fs.readdirSync(
+      screenshotsDirPaths.desktop,
+      { recursive: true }
+    )
+  }
+} catch(err) {
+  // In caso non c'è il file
+  if (err.code === "ENOENT") {
+    if (isMobile) {
+      if (screenshotsDirPaths.mobile.terminalEmu === "") {
+        console.log(`${colors.yellow}La stringa "${
+            colors.normal+colors.underline
+        }terminalEmu${colors.normal+colors.yellow}" è vuota${colors.normal}\n`)
+        process.exit()
+      }
+      console.log(`${colors.red}'${
+        colors.dimRed+colors.underline +
+        screenshotsDirPaths.mobile.terminalEmu // Altri casi
+      }${colors.normal+colors.red}' non esiste o è sbagliata${colors.normal}\n`)
+      process.exit()
+    } else { // Desktop
+      if (screenshotsDirPaths.desktop === "") {
+        console.log(`${colors.yellow}La stringa "${
+          colors.normal+colors.underline
+        }desktop${colors.normal+colors.yellow}" è vuota${colors.normal}\n`)
+        process.exit()
+      }
+      console.log(`${colors.red}'${
+        colors.dimRed+colors.underline +
+        screenshotsDirPaths.desktop // Altri casi
+      }${colors.normal+colors.red}' non esiste o è sbagliata${colors.normal}`)
+      process.exit()
+    }
+  }
+  console.log(err)
+  process.exit()
 }
 let listaImmagini_soloRecursivi = listaImmagini_suSistema.filter(
   thing => thing.search("/") !== -1
@@ -88,6 +136,13 @@ let itemsInFormatoStringa = JSON.stringify(parsedJSON?.items)
 var addCount = 0
 listaImmagini_soloRecursivi.forEach(
   imgConCartella => {
+    // In caso non c'è il file
+    if (isMobile) {
+      if (screenshotsDirPaths.mobile.normal === "") {
+        console.log(`${colors.yellow}La stringa "${colors.normal+colors.underline}normal${colors.normal+colors.yellow}" di mobile è vuota${colors.normal}`)
+        process.exit()
+      }
+    }
     const path = (isMobile) 
       ? screenshotsDirPaths.mobile.normal 
       : screenshotsDirPaths.desktop;
