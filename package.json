@@ -1,15 +1,34 @@
 {
-  "name": "fix-playlist-immagini",
+  "name": "fix-retroarch-image-playlist",
   "version": "1.0.0",
-  "description": "",
-  "main": "fix-playlist-immagini.mjs",
-  "scripts": {
-    "test": "node fix-playlist-immagini.mjs"
+  "description": "Fixes RetroArch's image playlist file",
+  "homepage": "https://github.com/unixatch/fix-retroarch-image-playlist/",
+  "repository": {
+    "type": "git",
+    "url": "github:unixatch/fix-retroarch-image-playlist"
   },
-  "author": "",
-  "license": "ISC",
+  "bugs": "https://github.com/unixatch/fix-retroarch-image-playlist/issues",
+  "keywords": [ 
+    "retroarch", 
+    "cli",
+    "script",
+    "fix", "image", "playlist",
+    "macos", "windows", "linux",
+    "bash",
+    "node"
+  ],
+  "main": "fix-retroarch-image-playlist.mjs",
+  "bin": {
+    "preferGlobal": true,
+    "fixRetroarchImagePlaylist": "./fix-retroarch-image-playlist.mjs"
+  },
+  "scripts": {
+    "test": "node fix-retroarch-image-playlist.mjs"
+  },
+  "author": "unixatch",
+  "license": "GPL-2.0-or-later",
   "dependencies": {
-    "chalk-animation": "^2.0.3",
-    "yaml": "^2.3.2"
+    "chalk-animation": ">=2.0.3",
+    "yaml": ">=2.3.2"
   }
 }
