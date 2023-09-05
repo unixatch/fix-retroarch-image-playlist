@@ -6,7 +6,7 @@ import YAML from "yaml"
 const { __dirname } = await import("./utils.mjs");
 
 
-// Opzioni
+// Options
 const configPath = join(__dirname, "config.yaml");
 const {
   pathOfPlaylistFile,
@@ -45,7 +45,7 @@ const colors = {
 const stdout = process.stdout;
 function escapeRegExp(string) {
   // ❗ . * + ? ^ $ { } ( ) | [ ] \ ❗
-  // $& —→ tutta la stringa identificata
+  // $& —→ the whole string being identified/matched
   return string
     .replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
@@ -55,17 +55,17 @@ function escapeRegExp(string) {
 try {
   var file = fs.readFileSync(pathOfPlaylistFile);
 } catch(err) {
-  // In caso non c'è il file
+  // In case there's no file
   if (err.code === "ENOENT") {
     if (pathOfPlaylistFile === "") {
-      console.log(`${colors.yellow}La stringa "${colors.normal+colors.underline}pathOfPlaylistFile${colors.normal+colors.yellow}" è vuota,\nmagari devi configurare ${
+      console.log(`${colors.yellow}The string "${colors.normal+colors.underline}pathOfPlaylistFile${colors.normal+colors.yellow}" is empty,\nmaybe you need to configure ${
         colors.normal +
         colors.italics +
         colors.dimYellow
       }config.yaml${colors.normal+colors.yellow} ?${colors.normal}\n`)
       process.exit()
     }
-    console.log(`${colors.red}'${colors.dimRed+colors.underline}content_image_history.lpl${colors.normal+colors.red}' non è presente${colors.normal}\n`)
+    console.log(`${colors.red}'${colors.dimRed+colors.underline}content_image_history.lpl${colors.normal+colors.red}' hasn't being found${colors.normal}\n`)
     process.exit()
   }
   console.log(err)
@@ -73,8 +73,8 @@ try {
 }
 let parsedJSON = JSON.parse(file);
 
-// Aggiunge le immagini mancanti nella lista
-const template_elemento = {
+// Adds the missing images to the list
+const templateOfImageObject = {
   "path": "",
   "label": "",
   "core_path": "builtin",
@@ -82,175 +82,175 @@ const template_elemento = {
   "crc32": "",
   "db_name": ""
 };
-let listaImmagini_suSistema;
+let imageList_onSystem;
 try {
   if (isMobile) {
-    listaImmagini_suSistema = fs.readdirSync(
+    imageList_onSystem = fs.readdirSync(
       screenshotsDirPaths.mobile.terminalEmu,
       { recursive: true }
     )
   } else {
-    listaImmagini_suSistema = fs.readdirSync(
+    imageList_onSystem = fs.readdirSync(
       screenshotsDirPaths.desktop,
       { recursive: true }
     )
   }
 } catch(err) {
-  // In caso non c'è il file
+  // In case there's no file
   if (err.code === "ENOENT") {
     if (isMobile) {
       if (screenshotsDirPaths.mobile.terminalEmu === "") {
-        console.log(`${colors.yellow}La stringa "${
+        console.log(`${colors.yellow}The string "${
             colors.normal+colors.underline
-        }terminalEmu${colors.normal+colors.yellow}" è vuota${colors.normal}\n`)
+        }terminalEmu${colors.normal+colors.yellow}"'s empty${colors.normal}\n`)
         process.exit()
       }
       console.log(`${colors.red}'${
         colors.dimRed+colors.underline +
-        screenshotsDirPaths.mobile.terminalEmu // Altri casi
-      }${colors.normal+colors.red}' non esiste o è sbagliata${colors.normal}\n`)
+        screenshotsDirPaths.mobile.terminalEmu // Other cases
+      }${colors.normal+colors.red}' doesn't exist or it's wrong${colors.normal}\n`)
       process.exit()
     } else { // Desktop
       if (screenshotsDirPaths.desktop === "") {
-        console.log(`${colors.yellow}La stringa "${
+        console.log(`${colors.yellow}The string "${
           colors.normal+colors.underline
-        }desktop${colors.normal+colors.yellow}" è vuota${colors.normal}\n`)
+        }desktop${colors.normal+colors.yellow}"'s empty${colors.normal}\n`)
         process.exit()
       }
       console.log(`${colors.red}'${
         colors.dimRed+colors.underline +
-        screenshotsDirPaths.desktop // Altri casi
-      }${colors.normal+colors.red}' non esiste o è sbagliata${colors.normal}`)
+        screenshotsDirPaths.desktop // Other cases
+      }${colors.normal+colors.red}' doesn't exist or it's wrong${colors.normal}`)
       process.exit()
     }
   }
   console.log(err)
   process.exit()
 }
-let listaImmagini_soloRecursivi = listaImmagini_suSistema.filter(
+let imageList_onlyRecursives = imageList_onSystem.filter(
   thing => thing.search("/") !== -1
 )
 
-//    L'aggiunta
-let itemsInFormatoStringa = JSON.stringify(parsedJSON?.items)
+//    The addition
+let itemsToString = JSON.stringify(parsedJSON?.items);
 var addCount = 0
-listaImmagini_soloRecursivi.forEach(
-  imgConCartella => {
-    // In caso non c'è il file
+imageList_onlyRecursives.forEach(
+  imgWithFolder => {
+    // In case there's no file
     if (isMobile) {
       if (screenshotsDirPaths.mobile.normal === "") {
-        console.log(`${colors.yellow}La stringa "${colors.normal+colors.underline}normal${colors.normal+colors.yellow}" di mobile è vuota${colors.normal}`)
+        console.log(`${colors.yellow}The string "${colors.normal+colors.underline}normal${colors.normal+colors.yellow}" inside mobile is empty${colors.normal}`)
         process.exit()
       }
     }
     const path = (isMobile) 
       ? screenshotsDirPaths.mobile.normal 
       : screenshotsDirPaths.desktop;
-    let pathCompletaImmagine = `${
+    let completeImgPath = `${
       escapeRegExp(path)
-    }${escapeRegExp(imgConCartella)}`
+    }${escapeRegExp(imgWithFolder)}`
     
-    // Inesistente nella lista
-    if (itemsInFormatoStringa.search(pathCompletaImmagine) === -1) 
+    // Non-existent inside the list
+    if (itemsToString.search(completeImgPath) === -1) 
     {
-      // ↓ Deve essere normale, niente escapes
-      let pathCompletaImmagine = `${path}${imgConCartella}`
-      let copiaTemplate = {
-        ...template_elemento
+      // ↓ It needs to be normal, no escapes
+      let completeImgPath = `${path}${imgWithFolder}`
+      let copyOfTemplate = {
+        ...templateOfImageObject
       };
       
-      copiaTemplate.path = pathCompletaImmagine;
-      parsedJSON?.items?.unshift(copiaTemplate)
+      copyOfTemplate.path = completeImgPath;
+      parsedJSON?.items?.unshift(copyOfTemplate)
       addCount += 1;
     }
   }
 )
-console.log(`Aggiunte ${
+console.log(`Added ${
   colors.bold +
   addCount +
   colors.normal
-} immagini nella lista`)
+} images to RetroArch's list`)
 
 let clearLastLine;
-let animazionePuntini_ID;
+let dotAnimation_ID;
 if (loadingAnims) {
-  // Animazione puntini basilare
-  const OGfrase = `${colors.dimGray}Calcolo cosa deve pulire/aggiungere${colors.normal}`;
-  var frase = OGfrase;
-  const velocitàAggiornamento = 1000;
+  // Basic dot animation
+  const OGphrase = `${colors.dimGray}Computing what needs to be cleaned/added${colors.normal}`;
+  var phrase = OGphrase;
+  const updateFrequency  = 1000;
   var dotCount = 0;
   const maxDotCount = 3;
   clearLastLine = () => {
     stdout.cursorTo(0);
     stdout.clearLine(0);
   }
-  function animazione_punti() {
+  function dotAnimation() {
     if (dotCount !== 0) clearLastLine();
     if (dotCount > maxDotCount) {
-      frase = OGfrase;
+      phrase = OGphrase;
       dotCount = 1;
     }
-    frase += `${colors.dimGray}.${colors.normal}`;
-    stdout.write(frase)
+    phrase += `${colors.dimGray}.${colors.normal}`;
+    stdout.write(phrase)
     dotCount += 1;
   }
-  animazionePuntini_ID = setInterval(animazione_punti, velocitàAggiornamento);
+  dotAnimation_ID = setInterval(dotAnimation, updateFrequency);
 }
 
-// Ottiene gli elementi da pulire
+// Obtains items to be cleaned
 let itemsToDelete = [];
 let itemsLength = parsedJSON?.items?.length;
-itemsInFormatoStringa = JSON.stringify(parsedJSON?.items)
+itemsToString = JSON.stringify(parsedJSON?.items)
 for (let i = 0; i < itemsLength; i++) {
-  let pathImmagine = parsedJSON?.items[i]?.path;
+  let imgPath = parsedJSON?.items[i]?.path;
   
-  // Inesistenti
-  if (!fs.existsSync(pathImmagine)) {
+  // Non-existents
+  if (!fs.existsSync(imgPath)) {
     itemsToDelete.push(i);
     continue;
   }
-  // Duplicati
+  // Duplicates
   const regex = new RegExp(
-    escapeRegExp(pathImmagine), "g"
+    escapeRegExp(imgPath), "g"
   );
-  const numeroRisultati = itemsInFormatoStringa.match(regex)?.length
+  const resultsAmount = itemsToString.match(regex)?.length
   
-  if (numeroRisultati > 1) {
+  if (resultsAmount > 1) {
     itemsToDelete.push(i);
   }
 }
 if (loadingAnims) {
-  clearInterval(animazionePuntini_ID)
+  clearInterval(dotAnimation_ID)
   clearLastLine()
 }
-console.log("Finito di calcolare gli elementi da pulire")
+console.log("Done computing what needs to be cleaned")
 
 
 if (chalkLoadingAnim) {
-  // Animazione colorata
+  // Colored animation
   const { default: chalkAnimation } = 
     await import("chalk-animation")
-  let str = `Pulizia di ${itemsToDelete.length} elementi in corso`;
+  let str = `Cleaning ${itemsToDelete.length} items`;
   chalkAnimation.pulse(str);
 }
 
-// Pulisce la lista
+// Cleans RetroArch's image list
 itemsToDelete.forEach(
   index => delete parsedJSON?.items[index]
 )
 clearLastLine()
-console.log("Pulita la lista")
+console.log("Cleaned the list")
 
-// In caso il JSON è rotto
+// In case the JSON breaks
 try {
-  let JSONFinito_inStringa = JSON.stringify(parsedJSON);
-  JSON.parse(JSONFinito_inStringa)
+  let completeJSON_toString = JSON.stringify(parsedJSON);
+  JSON.parse(completeJSON_toString)
 } catch(err) {
   console.log(err)
   process.exit()
 }
 
-// Scrive al file
+// Writes to file
 let newJsonFile = Buffer.from(
   JSON.stringify(parsedJSON)
 )
