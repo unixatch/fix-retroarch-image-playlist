@@ -8,8 +8,8 @@
     "url": "github:unixatch/fix-retroarch-image-playlist"
   },
   "bugs": "https://github.com/unixatch/fix-retroarch-image-playlist/issues",
-  "keywords": [ 
-    "retroarch", 
+  "keywords": [
+    "retroarch",
     "cli",
     "script",
     "fix", "image", "playlist",
@@ -17,18 +17,21 @@
     "bash",
     "node"
   ],
+  "preferGlobal": true,
   "main": "fix-retroarch-image-playlist.mjs",
   "bin": {
-    "preferGlobal": true,
     "fixRetroarchImagePlaylist": "./fix-retroarch-image-playlist.mjs"
   },
   "scripts": {
-    "test": "node fix-retroarch-image-playlist.mjs"
+    "test": "node fix-retroarch-image-playlist.mjs",
+    "postinstall": "node createConfigYAML.mjs"
   },
   "author": "unixatch",
   "license": "GPL-2.0-or-later",
   "dependencies": {
     "chalk-animation": ">=2.0.3",
+    "inquirer": ">=9.2.10",
+    "inquirer-file-tree-selection-prompt": ">=2.0.5",
     "yaml": ">=2.3.2"
   }
 }
