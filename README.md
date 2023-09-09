@@ -12,11 +12,19 @@ To install it you'll need installed:
 - NodeJS;
 - A terminal (Termux or whatever);
 
-And then type:
+then type:
 ```bash
 npm install -g fix-retroarch-image-playlist
 ```
 
+Finally run:
+```bash
+fixRetroarchImagePlaylist --config
+```
+to configure the script with the correct paths
+
 ### How to use it?
 
-You'll need to either type `fix-retroarch-image-playlist` in the terminal or `node fix-retroarch-image-playlist.mjs` in the same folder of where the package is installed
+You'll need to either type `fixRetroarchImagePlaylist` in the terminal or `node fix-retroarch-image-playlist.mjs` in the same folder of where the package is installed
+
+Read [COMMAND LINE PARAMETERS](COMMAND-LINE-PARAMETERS.md) for more information about the available parameters
