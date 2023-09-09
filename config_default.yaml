@@ -9,15 +9,22 @@ pathOfPlaylistFile: ""
 # by RetroArch are being stored
 screenshotsDirPaths:
   desktop: ""
-  
+
   # Termux or similar terminal emulators below
   mobile:
+    # NOTE: Slash at the end
     normal: ""
     # termux-setup-storage's path to
     # the same folder or something similar
+    #    NOTE: no slash at the end
     terminalEmu: ""
 
 # Different kinds of loading
 # animations for certain sections
 loadingAnims: true
 chalkLoadingAnim: true
+
+# This is your external sdcard number
+# assigned by Android, change it only
+# if you have a different number than default
+extStorageNum: 0
