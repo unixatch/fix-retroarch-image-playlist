@@ -1,13 +1,17 @@
 #!/usr/bin/env node
 import fs from "fs"
-import { join } from "path"
+import { join, sep } from "path"
 import { execSync } from "child_process"
 import YAML from "yaml"
-const { __dirname } = await import("./utils.mjs");
+import configYAMLFilePath from "./createConfigYAML.mjs"
+import actUpOnPassedArgs from "./cli.mjs"
 
+
+// In case the user passes some arguments
+await actUpOnPassedArgs(process.argv)
 
 // Options
-const configPath = join(__dirname, "config.yaml");
+const configPath = configYAMLFilePath;
 const {
   pathOfPlaylistFile,
   screenshotsDirPaths,
@@ -29,18 +33,17 @@ try {
   isMobile = false;
 }
 
-const colors = {
-  // Custom formatting
-  normal: "\x1b[0m",
-  bold: "\x1b[1m",
-  italics: "\x1b[3m",
-  underline: "\x1b[4m",
+// Custom formatting
+const normal= "\x1b[0m",
+  bold= "\x1b[1m",
+  italics= "\x1b[3m",
+  underline= "\x1b[4m",
   // Actual colors
-  red: "\x1b[31;1m",
-  yellow: "\x1b[33m",
-  dimYellow: "\x1b[33;2m",
-  dimRed: "\x1b[31;2m"
-}
+  dimGray= "\x1b[37;2m",
+  red= "\x1b[31;1m",
+  yellow= "\x1b[33m",
+  dimYellow= "\x1b[33;2m",
+  dimRed= "\x1b[31;2m"
 
 const stdout = process.stdout;
 function escapeRegExp(string) {
@@ -58,14 +61,12 @@ try {
   // In case there's no file
   if (err.code === "ENOENT") {
     if (pathOfPlaylistFile === "") {
-      console.log(`${colors.yellow}The string "${colors.normal+colors.underline}pathOfPlaylistFile${colors.normal+colors.yellow}" is empty,\nmaybe you need to configure ${
-        colors.normal +
-        colors.italics +
-        colors.dimYellow
-      }config.yaml${colors.normal+colors.yellow} ?${colors.normal}\n`)
+      console.log(`${yellow}The string "${normal+underline}pathOfPlaylistFile${normal+yellow}" is empty,\nmaybe you need to configure ${
+        normal+italics+dimYellow
+      }config.yaml${normal+yellow} ?${normal}\n`)
       process.exit()
     }
-    console.log(`${colors.red}'${colors.dimRed+colors.underline}content_image_history.lpl${colors.normal+colors.red}' hasn't being found${colors.normal}\n`)
+    console.log(`${red}'${dimRed+underline}content_image_history.lpl${normal+red}' hasn't being found${normal}\n`)
     process.exit()
   }
   console.log(err)
@@ -100,27 +101,23 @@ try {
   if (err.code === "ENOENT") {
     if (isMobile) {
       if (screenshotsDirPaths.mobile.terminalEmu === "") {
-        console.log(`${colors.yellow}The string "${
-            colors.normal+colors.underline
-        }terminalEmu${colors.normal+colors.yellow}"'s empty${colors.normal}\n`)
+        console.log(`${yellow}The string "${normal+underline}terminalEmu${normal+yellow}"'s empty${normal}\n`)
         process.exit()
       }
-      console.log(`${colors.red}'${
-        colors.dimRed+colors.underline +
+      console.log(`${red}'${
+        dimRed+underline +
         screenshotsDirPaths.mobile.terminalEmu // Other cases
-      }${colors.normal+colors.red}' doesn't exist or it's wrong${colors.normal}\n`)
+      }${normal+red}' doesn't exist or it's wrong${normal}\n`)
       process.exit()
     } else { // Desktop
       if (screenshotsDirPaths.desktop === "") {
-        console.log(`${colors.yellow}The string "${
-          colors.normal+colors.underline
-        }desktop${colors.normal+colors.yellow}"'s empty${colors.normal}\n`)
+        console.log(`${yellow}The string "${normal+underline}desktop${normal+yellow}"'s empty${normal}\n`)
         process.exit()
       }
-      console.log(`${colors.red}'${
-        colors.dimRed+colors.underline +
+      console.log(`${red}'${
+        dimRed+underline +
         screenshotsDirPaths.desktop // Other cases
-      }${colors.normal+colors.red}' doesn't exist or it's wrong${colors.normal}`)
+      }${normal+red}' doesn't exist or it's wrong${normal}`)
       process.exit()
     }
   }
@@ -128,7 +125,7 @@ try {
   process.exit()
 }
 let imageList_onlyRecursives = imageList_onSystem.filter(
-  thing => thing.search("/") !== -1
+  thing => thing.search(sep) !== -1
 )
 
 //    The addition
@@ -139,7 +136,7 @@ imageList_onlyRecursives.forEach(
     // In case there's no file
     if (isMobile) {
       if (screenshotsDirPaths.mobile.normal === "") {
-        console.log(`${colors.yellow}The string "${colors.normal+colors.underline}normal${colors.normal+colors.yellow}" inside mobile is empty${colors.normal}`)
+        console.log(`${yellow}The string "${normal+underline}normal${normal+yellow}" inside mobile is empty${normal}`)
         process.exit()
       }
     }
@@ -166,16 +163,16 @@ imageList_onlyRecursives.forEach(
   }
 )
 console.log(`Added ${
-  colors.bold +
+  bold +
   addCount +
-  colors.normal
+  normal
 } images to RetroArch's list`)
 
 let clearLastLine;
 let dotAnimation_ID;
 if (loadingAnims) {
   // Basic dot animation
-  const OGphrase = `${colors.dimGray}Computing what needs to be cleaned/added${colors.normal}`;
+  const OGphrase = `${dimGray}Computing what needs to be cleaned/added${normal}`;
   var phrase = OGphrase;
   const updateFrequency  = 1000;
   var dotCount = 0;
@@ -190,7 +187,7 @@ if (loadingAnims) {
       phrase = OGphrase;
       dotCount = 1;
     }
-    phrase += `${colors.dimGray}.${colors.normal}`;
+    phrase += `${dimGray}.${normal}`;
     stdout.write(phrase)
     dotCount += 1;
   }
