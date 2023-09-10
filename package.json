@@ -5,22 +5,26 @@
   "homepage": "https://github.com/unixatch/fix-retroarch-image-playlist/",
   "repository": {
     "type": "git",
-    "url": "github:unixatch/fix-retroarch-image-playlist"
+    "url": "git+https://github.com/unixatch/fix-retroarch-image-playlist.git"
   },
   "bugs": "https://github.com/unixatch/fix-retroarch-image-playlist/issues",
   "keywords": [
     "retroarch",
     "cli",
     "script",
-    "fix", "image", "playlist",
-    "macos", "windows", "linux",
+    "fix",
+    "image",
+    "playlist",
+    "macos",
+    "windows",
+    "linux",
     "bash",
     "node"
   ],
   "preferGlobal": true,
   "main": "fix-retroarch-image-playlist.mjs",
   "bin": {
-    "fixRetroarchImagePlaylist": "./fix-retroarch-image-playlist.mjs"
+    "fixRetroarchImagePlaylist": "fix-retroarch-image-playlist.mjs"
   },
   "scripts": {
     "test": "node fix-retroarch-image-playlist.mjs",
