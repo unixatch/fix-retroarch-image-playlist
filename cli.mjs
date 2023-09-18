@@ -82,6 +82,10 @@ const actUpOnPassedArgs = async (args) => {
           help()
           process.exit()
         }
+        case /^(--version|-v|\/v)$/.test(arg) && arg: {
+          version()
+          process.exit()
+        }
         
         default:
           switch (lastParam) {
@@ -359,8 +363,17 @@ const help = () => {
       
     ${green}--help${normal}, ${green}-h${normal}, ${green}/h${normal}, ${green}/?${normal}:
       ${dimGray+italics}Shows this help message${normal}
+      
+    ${green}--version${normal}, ${green}-v${normal}, ${green}/v${normal}:
+      ${dimGray+italics}Shows the installed version${normal}
   `
   console.log(helpText)
+}
+const version = () => {
+  const packageJSONPath = join(__dirname, "package.json");
+  const { version } = JSON.parse(readFileSync(packageJSONPath).toString());
+  
+  console.log(`${green + version + normal}`)
 }
 
 export default actUpOnPassedArgs

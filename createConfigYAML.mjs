@@ -1,5 +1,5 @@
 import { platform, env, exit } from "process"
-import { existsSync, copyFileSync } from "fs"
+import { existsSync, mkdirSync, copyFileSync } from "fs"
 import { join } from "path"
 
 let configFolder;
@@ -17,6 +17,9 @@ switch (platform) {
 
 const configFileFolder = join(configFolder, "fix-retroarch-image-playlist");
 const completePath = join(configFileFolder, "config.yaml");
+
+// In case there's no config folder
+if (!existsSync(configFileFolder)) mkdirSync(configFileFolder);
 
 // In case there's no matching file inside the location
 if (!existsSync(completePath)) copyFileSync("config_default.yaml", completePath);
