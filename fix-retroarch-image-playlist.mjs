@@ -16,16 +16,18 @@
     along with fix-retroarch-image-playlist.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import fs from "fs"
-import { join, sep } from "path"
-import { execSync } from "child_process"
-import YAML from "yaml"
-import configYAMLFilePath from "./createConfigYAML.mjs"
-import actUpOnPassedArgs from "./cli.mjs"
-
-
 // In case the user passes some arguments
-await actUpOnPassedArgs(process.argv)
+const userArgs = process.argv.slice(2);
+if (userArgs.length > 0) {
+  const { actUpOnPassedArgs } = await import("./cli.mjs");
+  await actUpOnPassedArgs(process.argv)
+}
+const { default: fs } = await import("fs");
+const { join, sep } = await import("path");
+const { execSync } = await import("child_process");
+const { default: YAML } = await import("yaml");
+const { default: configYAMLFilePath } = await import("./createConfigYAML.mjs");
+
 
 // Options
 const configPath = configYAMLFilePath;

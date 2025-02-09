@@ -24,12 +24,8 @@ import {
 } from "fs"
 import { execSync } from "child_process"
 import { join, sep } from "path"
-import YAML from "yaml"
-import inquirer from "inquirer"
-import inquirerFileTreeSelection from "inquirer-file-tree-selection-prompt"
 import configYAMLFilePath from "./createConfigYAML.mjs"
 import { __dirname } from "./utils.mjs"
-inquirer.registerPrompt("file-tree-selection", inquirerFileTreeSelection)
 
 
 // Custom formatting
@@ -79,6 +75,10 @@ const actUpOnPassedArgs = async (args) => {
           process.exit()
         }
         case /^(--config-set|-s|\/s)$/.test(arg) && arg: {
+          // In case there's no other argument
+          const indexOfArg = newArguments.indexOf(arg);
+          if (newArguments[indexOfArg + 1] === undefined) throw new ReferenceError("Missing necessary argument");
+          
           lastParam = "settingUp"
           break;
         }
@@ -124,6 +124,11 @@ const actUpOnPassedArgs = async (args) => {
   }
 }
 const askForFile = async () => {
+  const { default: YAML } = await import("yaml");
+  const { default: inquirer } = await import("inquirer");
+  const { default: inquirerFileTreeSelection } = await import("inquirer-file-tree-selection-prompt");
+  inquirer.registerPrompt("file-tree-selection", inquirerFileTreeSelection)
+    
   const validation = input => {
     if (input.includes("content_image_history.lpl")) return true;
     if (existsSync(input)
@@ -161,6 +166,11 @@ const askForFile = async () => {
   };
 }
 const askForDirectory = async (configObject) => {
+  const { default: YAML } = await import("yaml");
+  const { default: inquirer } = await import("inquirer");
+  const { default: inquirerFileTreeSelection } = await import("inquirer-file-tree-selection-prompt");
+  inquirer.registerPrompt("file-tree-selection", inquirerFileTreeSelection)
+    
   let isMobile;
   try {
     // Android 
@@ -256,7 +266,9 @@ const askForDirectory = async (configObject) => {
     })
   }
 }
-const setConfigValue = value => {
+const setConfigValue = async value => {
+  const { default: YAML } = await import("yaml");
+    
   // Must include a ,
   if (!value.includes(",")) {
     throw new TypeError("String with 'property, value' needed")
@@ -339,13 +351,17 @@ const setConfigValue = value => {
   );
   writeFileSync(configFilePath, configFile_toString)
 }
-const showConfigValues = () => {
+const showConfigValues = async () => {
+  const { default: YAML } = await import("yaml");
+    
   const configFilePath = configYAMLFilePath;
   const configFile = YAML.parse(readFileSync(configFilePath).toString());
   
   console.log(configFile);
 }
-const showConfigValuesAsTable = () => {
+const showConfigValuesAsTable = async () => {
+  const { default: YAML } = await import("yaml");
+    
   const configFilePath = configYAMLFilePath;
   const configFile = YAML.parse(readFileSync(configFilePath).toString());
   
@@ -393,4 +409,4 @@ const version = () => {
   console.log(`${green + version + normal}`)
 }
 
-export default actUpOnPassedArgs
+export { actUpOnPassedArgs }
